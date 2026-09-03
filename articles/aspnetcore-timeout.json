@@ -1,0 +1,37 @@
+{
+  "name": "Your ASP.NET Core Endpoints Don't Have a Timeout",
+  "source": "Milan Jovanović",
+  "url": "https://milanjovanovic.tech/blog/your-aspnetcore-endpoints-dont-have-a-timeout",
+  "chunks": [
+    {
+      "content": "ASP.NET Core does not apply an application timeout to incoming requests by default. The built-in request timeout middleware adds a deadline, but it only cancels HttpContext.RequestAborted. Your endpoint must pass that token into the work you want to stop. A reverse proxy might return its own timeout first, but then it controls the deadline and response instead of your application. A slow database query or stalled API call can keep consuming resources after its response is no longer useful. .NET 8 introduced request timeout middleware to give request processing a cooperative deadline.",
+      "index": 0,
+      "metadata": "introduction"
+    },
+    {
+      "content": "To add a timeout to an endpoint, register the middleware and apply a timeout in Program.cs: call services.AddRequestTimeouts() to register services, app.UseRequestTimeouts() to add the middleware, and .WithRequestTimeout(TimeSpan.FromSeconds(3)) on the endpoint. Minimal APIs bind the CancellationToken parameter to HttpContext.RequestAborted. After the timeout, work that observes cancellation throws OperationCanceledException. If that exception reaches the middleware before the response starts, the default response is an empty 504 Gateway Timeout. Test without an attached debugger because the timeout does not trigger while a debugger is attached.",
+      "index": 1,
+      "metadata": "Add a Timeout to the Endpoint"
+    },
+    {
+      "content": "The request timeout middleware does not abort a thread or call HttpContext.Abort(). It cancels a token and keeps waiting for the endpoint. Remove the CancellationToken from downstream work and the handler waits the full duration before returning 200 OK. There is no immediate 504 because no cancellation exception reaches the middleware. The token has to be passed through the endpoint, application service, and EF Core before the database provider can attempt to cancel the query. The same token is canceled when the client disconnects, so flowing it through the entire call chain matters even before adding a timeout.",
+      "index": 2,
+      "metadata": "The Token Has to Reach the Work"
+    },
+    {
+      "content": "Not every endpoint should share the same timeout limit. Use named policies in AddRequestTimeouts: options.AddPolicy(\"api-read\", TimeSpan.FromSeconds(3)) and options.AddPolicy(\"report-export\", TimeSpan.FromSeconds(30)). Attach each policy with .WithRequestTimeout(\"api-read\"). Use .DisableRequestTimeout() for Server-Sent Events, WebSockets, long polling, and large uploads. Once a streaming response starts, the middleware cannot replace it with a clean 504. If an operation needs minutes, return 202 Accepted and finish it in the background.",
+      "index": 3,
+      "metadata": "Choose Timeouts Per Endpoint"
+    },
+    {
+      "content": "A 504 from the middleware tells you that cancellation reached it, but it does not prove that every downstream operation stopped. Start with one endpoint that calls EF Core or HttpClient, set a realistic limit, force a slow call past it without a debugger attached, and use logs or a trace to verify that the dependency observed cancellation.",
+      "index": 4,
+      "metadata": "Summary"
+    },
+    {
+      "content": "Frequently asked questions: ASP.NET Core has no default application-level deadline for processing a request. To add a timeout on .NET 8 or later, call AddRequestTimeouts, add UseRequestTimeouts, and apply a duration or named policy with WithRequestTimeout. The middleware does not forcibly stop endpoint code; it cancels the token exposed through HttpContext.RequestAborted and continues waiting. The default response is an empty 504 Gateway Timeout when an OperationCanceledException reaches the middleware before the response starts. The timeout does not fire while a debugger is attached. Streaming, SSE, WebSockets, and long polling usually need a separate longer policy or an explicit opt-out.",
+      "index": 5,
+      "metadata": "FAQ"
+    }
+  ]
+}
