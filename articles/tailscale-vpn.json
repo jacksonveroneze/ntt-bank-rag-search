@@ -1,0 +1,32 @@
+{
+  "name": "Build Your Own VPN With Tailscale",
+  "source": "Milan Jovanović",
+  "url": "https://milanjovanovic.tech/blog/build-your-own-vpn-with-tailscale",
+  "chunks": [
+    {
+      "content": "Tailscale connects your own machines into a single private, encrypted network called a tailnet, built on WireGuard. Every device dials outward only, so you can bind Postgres or Grafana to the machine's tailnet IP and close every inbound firewall port. Private services need no TLS certificates or reverse proxies, because WireGuard already encrypts every byte.",
+      "index": 0,
+      "metadata": "introduction"
+    },
+    {
+      "content": "A traditional VPN is hub and spoke, with all traffic funneled through one central server. Tailscale builds a mesh where every device connects directly to every other device over its own encrypted tunnel. A coordination server acts as a phone book for devices and keys, while data flows directly between devices, encrypted end to end.",
+      "index": 1,
+      "metadata": "What Tailscale Actually Is"
+    },
+    {
+      "content": "Install Tailscale with curl and tailscale up, approve the device, and it joins the tailnet with a stable 100.x.y.z IP. For two VPSs, vps-app runs a .NET API and vps-data runs Postgres and Grafana. Because devices only dial outward, the cloud firewall needs no inbound rules. Confirm SSH over the tailnet, then delete the public port-22 rule.",
+      "index": 2,
+      "metadata": "Connecting Two VPSs With Zero Open Ports"
+    },
+    {
+      "content": "Bind services to the tailnet IP, not 0.0.0.0. In Docker Compose, publish ports as '100.64.0.3:5432:5432' instead of '5432:5432'. This means Postgres has no public endpoint at any layer, yet every device on the tailnet reaches it. Wire the app to the data box with a normal connection string pointing at its stable tailnet IP.",
+      "index": 3,
+      "metadata": "Bind Services to the Tailnet IP"
+    },
+    {
+      "content": "Once machines share one private network, every internal service stops being a public endpoint to defend. Only services an outside party must reach get a public hostname. This pattern is used for Katabench: one reverse proxy on 80 and 443 is public, while Postgres, queues, Grafana, and telemetry live on the tailnet with no public hostname.",
+      "index": 4,
+      "metadata": "The Payoff"
+    }
+  ]
+}

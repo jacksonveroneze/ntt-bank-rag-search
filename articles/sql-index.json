@@ -1,0 +1,47 @@
+{
+  "name": "From 17ms to 0.04ms: How to Design the Right SQL Index",
+  "source": "Milan Jovanović",
+  "url": "https://milanjovanovic.tech/blog/how-to-design-the-right-sql-index",
+  "chunks": [
+    {
+      "content": "A good SQL index comes from the queries your application runs, not from the table schema. Composite indexes need the right column order: equality columns first, then the column you sort or range on. EXPLAIN ANALYZE is how you verify it: a sequential scan over 1 million comments takes 17ms, and the right composite index answers in 0.04ms.",
+      "index": 0,
+      "metadata": "introduction"
+    },
+    {
+      "content": "An index stores chosen columns in sorted order with entries pointing back to the full row. The default kind in major databases is the B-tree, which stays shallow even at millions of rows. A sequential scan reads all rows; an index scan descends a few levels and fetches only matches.",
+      "index": 1,
+      "metadata": "What Is a SQL Index"
+    },
+    {
+      "content": "You don't pick indexes by staring at the schema; they come from the queries the application actually runs. Example access patterns for a comments table are: all comments by a user, all comments for an issue, and comments for an issue from one user, newest first, last month only.",
+      "index": 2,
+      "metadata": "Start With the Query, Not the Table"
+    },
+    {
+      "content": "EXPLAIN ANALYZE runs the query for real and prints the plan. Without an index, a Parallel Seq Scan over 1 million rows takes 17ms. Adding a single-column index on user_id turns the same query into an Index Only Scan in 0.6ms because the index alone can answer COUNT(*).",
+      "index": 3,
+      "metadata": "Reading the First Plan"
+    },
+    {
+      "content": "Column order is everything. For a query with issue_id equality, user_id equality, and created_at range ordered DESC, the composite index (issue_id, user_id, created_at DESC) answers the whole query in 0.039ms by jumping to the matching section and reading it already sorted. The leftmost prefix rule explains why (issue_id, user_id) works but (user_id) alone cannot serve an issue_id-only query.",
+      "index": 4,
+      "metadata": "Column Order Is Everything"
+    },
+    {
+      "content": "A dashboard query fetching the 25 newest open issues with their latest comment used a LATERAL subquery. With the wrong index order, Postgres sorts 6,537 times and runs in 436ms. Reordering the index to (issue_id, created_at DESC) and adding (status, created_at DESC) on issues drops the query to 0.489ms because every node reads only what it returns.",
+      "index": 5,
+      "metadata": "The Query Our New Index Can't Serve"
+    },
+    {
+      "content": "Indexes cost writes and disk space. Each composite index for 1 million comments is about 30 MB, versus 7 MB for single-column ones. Remove redundant indexes. An index only helps if the query can use it; wrapping an indexed column in a function makes Postgres ignore it.",
+      "index": 6,
+      "metadata": "What Do Indexes Cost"
+    },
+    {
+      "content": "Summary: design indexes from your queries, not your tables. Composite indexes need the right column order: equality columns first, then the sort or range column. LIMIT only helps when an index feeds rows already in order. EXPLAIN ANALYZE is the proof.",
+      "index": 7,
+      "metadata": "Summary"
+    }
+  ]
+}

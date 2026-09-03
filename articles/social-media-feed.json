@@ -1,0 +1,37 @@
+{
+  "name": "How Do You Build a Social Media Feed? (System Design)",
+  "source": "Milan Jovanović",
+  "url": "https://milanjovanovic.tech/blog/how-do-you-build-a-social-media-feed-system-design",
+  "chunks": [
+    {
+      "content": "A home feed starts as fan-out on read: query the posts of every account you follow, merge, sort, return a page. That work moves to write time once reads outnumber writes, with workers appending post ids to a per-follower timeline cache. Celebrity accounts break that too, and hybrid fan-out merges their posts in at read time instead.",
+      "index": 0,
+      "metadata": "introduction"
+    },
+    {
+      "content": "Fan-out on read computes the feed at request time. A user following 800 accounts turns one page view into an 800-way merge. With a composite index on (author_id, created_at), this stays fine for hundreds of reads per second and a few hundred follows. The ratio matters: Twitter reported 300,000 home timeline reads per second against 5,000 new tweets, or 60 reads per write, which justifies moving work to the write side.",
+      "index": 1,
+      "metadata": "Fan-Out on Read"
+    },
+    {
+      "content": "The write path needs a single writer. Public traffic enters through an API gateway, and only the Post API writes the post store. The single writer gives one transactional boundary where committing a post and recording its event happen atomically in commit order. Splitting posting across two services creates two event streams with no shared order and races between creates and deletes.",
+      "index": 2,
+      "metadata": "The Single-Writer Rule"
+    },
+    {
+      "content": "Fan-out on write keeps a per-follower timeline cache updated by writes. When an author publishes, the post is committed and an event is published to a topic. Fan-out workers append the post id to each follower's timeline. The Feed API serves one timeline lookup plus a batched fetch to hydrate posts. Store ids, not posts, enforce policy at hydration, treat the projection as disposable, publish only after commit, and chunk the fan-out across follower ranges with idempotent appends.",
+      "index": 3,
+      "metadata": "Fan-Out on Write"
+    },
+    {
+      "content": "Fan-out on write amplifies writes: a celebrity with 50 million followers creates 50 million cache appends. This causes consumer lag and cache churn. Mitigations: fan out only to active followers, or merge celebrity posts at read time (hybrid fan-out) so ordinary posts use write fan-out while celebrities use read-time fan-out.",
+      "index": 4,
+      "metadata": "Write Amplification"
+    },
+    {
+      "content": "Summary: start with fan-out on read because it is simple and works for small scale. Move to fan-out on write when reads dominate. Use a single writer, durable events, idempotent appends, and hybrid fan-out for celebrities. Verify with realistic read/write ratios and follower distributions before over-engineering.",
+      "index": 5,
+      "metadata": "Summary"
+    }
+  ]
+}

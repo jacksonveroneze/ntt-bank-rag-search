@@ -1,0 +1,37 @@
+{
+  "name": "How I Migrated My Website to Cloudflare and Saved $228",
+  "source": "Milan Jovanović",
+  "url": "https://milanjovanovic.tech/blog/how-i-migrated-my-website-to-cloudflare-and-saved-228-dollars",
+  "chunks": [
+    {
+      "content": "I moved this site from Netlify to Cloudflare Pages without downtime by deploying to both hosts from the same GitHub Actions build, verifying the Pages copy on its own URL, then flipping a single DNS record. Netlify kept serving production until that flip, so rolling back meant repointing one record. The new hosting bill is $0.",
+      "index": 0,
+      "metadata": "introduction"
+    },
+    {
+      "content": "Netlify served the site reliably for $19 per month, but the setup became redundant. The site compiles to static files, and GitHub Actions already does the build. Cloudflare Pages serves static files for free with unmetered bandwidth on a large edge network. The hard part is switching without breaking DNS, email auth, redirects, and comment auth.",
+      "index": 1,
+      "metadata": "What $19 a Month Was Buying"
+    },
+    {
+      "content": "The migration principle is: the old host keeps serving production until a single DNS change flips traffic to the new one. Steps: deploy to Cloudflare Pages in parallel and verify the copy on its own URL, move DNS hosting to Cloudflare while records still point at Netlify, flip the website record to Pages, let it bake, then decommission Netlify.",
+      "index": 2,
+      "metadata": "The Plan"
+    },
+    {
+      "content": "CI keeps building in GitHub Actions, and wrangler uploads the dist folder to Cloudflare Pages as a direct upload deployment. Two GitHub secrets are needed: CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID. If the site has auth, add the new domain to the provider's authorized list before cutover.",
+      "index": 3,
+      "metadata": "Step 1: One Build, Two Hosts"
+    },
+    {
+      "content": "Move DNS hosting to Cloudflare by changing nameservers at the registrar while records still point at Netlify. Before touching anything, inventory every DNS record, especially MX, SPF, DKIM, DMARC, and domain verification TXT records. Cloudflare imports records but may miss some, so verify each manually. Keep email and verification records DNS only (grey cloud).",
+      "index": 4,
+      "metadata": "Step 2: Move DNS Without Moving the Website"
+    },
+    {
+      "content": "The cutover is adding the domain as a custom domain on the Pages project. Cloudflare repoints the DNS record and provisions a certificate. Rollback is safe because Netlify still holds the latest deploy thanks to dual-deploy, and DNS changes take seconds. After verification, remove the Netlify deploy step from CI. The one thing that broke was a sitemap redirect that had only existed in netlify.toml; Cloudflare Pages uses a _redirects file instead.",
+      "index": 5,
+      "metadata": "Step 3: The Cutover"
+    }
+  ]
+}

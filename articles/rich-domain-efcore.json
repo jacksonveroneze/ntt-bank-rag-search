@@ -1,0 +1,37 @@
+{
+  "name": "Persisting a Rich Domain Model With EF Core",
+  "source": "Milan Jovanović",
+  "url": "https://milanjovanovic.tech/blog/persisting-a-rich-domain-model-with-ef-core",
+  "chunks": [
+    {
+      "content": "EF Core does not need public setters or a public parameterless constructor. It builds entities through a private constructor and reads and writes state through backing fields, so a fully encapsulated aggregate loads and saves like any other entity. Strongly typed IDs, private collections, value objects, and domain events are all handled in configuration classes the domain never references.",
+      "index": 0,
+      "metadata": "introduction"
+    },
+    {
+      "content": "A rich aggregate can have no public setters, creation through a factory, and state changes through methods. The home brewing Batch example uses private fields for readings, domain events, and bottledAtUtc, with private methods enforcing invariants. A private parameterless constructor is the one concession to EF Core.",
+      "index": 1,
+      "metadata": "The Aggregate We Want to Persist"
+    },
+    {
+      "content": "EF Core materializes entities by calling the private parameterless constructor and writing through backing fields and private setters. Change tracking reads the same backing fields, so private setters hide nothing from SaveChanges. Navigations cannot be constructor-bound, so aggregates with collections still need a parameterless constructor. EF skips factory validation during materialization so historical rows remain loadable when rules change.",
+      "index": 2,
+      "metadata": "Private Constructors and Private Setters Just Work"
+    },
+    {
+      "content": "Strongly typed IDs can be mapped with value conversions. Generate IDs in code and use ValueGeneratedNever so EF does not try to value-generate behind a converter. A RecipeId reference to another aggregate is stored as a foreign key column but is not a navigation property; aggregates reference each other by ID only.",
+      "index": 3,
+      "metadata": "Strongly Typed IDs and References to Other Aggregates"
+    },
+    {
+      "content": "Encapsulated collections are mapped by configuring the backing field explicitly so the mapping survives renames. Child entities live and die with the aggregate, value objects are mapped as owned entities, and private fields without properties can be mapped too. Domain events can be persisted by mapping them as an owned collection or by intercepting SaveChanges.",
+      "index": 4,
+      "metadata": "Collections, Value Objects and Domain Events"
+    },
+    {
+      "content": "Summary: EF Core can persist fully encapsulated aggregates. Use private constructors, private setters, backing fields, value conversions for strongly typed IDs, and explicit collection mapping. Keep domain logic inside the aggregate and persistence details inside EF Core configurations that the domain does not reference.",
+      "index": 5,
+      "metadata": "Summary"
+    }
+  ]
+}

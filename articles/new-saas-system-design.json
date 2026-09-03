@@ -1,0 +1,37 @@
+{
+  "name": "The System Design Behind My New SaaS",
+  "source": "Milan Jovanović",
+  "url": "https://milanjovanovic.tech/blog/the-system-design-behind-my-new-saas",
+  "chunks": [
+    {
+      "content": "Katabench runs on three Hetzner servers inside one private VPN, with nothing public except ports 80 and 443. The API publishes each submission to NATS, a worker on a separate server picks it up, and the code runs in a throwaway container sandbox with no network access. Auth and payments are the only pieces bought instead of self-hosted.",
+      "index": 0,
+      "metadata": "introduction"
+    },
+    {
+      "content": "Katabench has three applications: a marketing website in Astro, a React app with Vite and TypeScript, and a .NET backend. The static sites are served through Cloudflare. The backend runs on three Hetzner VPSs: an API server, a worker server, and a platform server for deployments and observability. Headscale provides the VPN, Dokploy handles deployments, Traefik is the reverse proxy, and Grafana handles observability.",
+      "index": 1,
+      "metadata": "The Big Picture"
+    },
+    {
+      "content": "All servers join the same private network and nothing is exposed publicly except ports 80 and 443. A desktop PC and a Mac Mini for agent loops are also on the VPN. Tailscale's WireGuard mesh and Headscale's coordination server provide stable private IPs, while Headscale ACLs restrict what each machine can reach.",
+      "index": 2,
+      "metadata": "Private by Default"
+    },
+    {
+      "content": "The API server runs the .NET API alongside Postgres, Redis, and NATS. Running Postgres on the same box as the API avoids network hops and saves cost compared to managed Postgres. Backups are a nightly cron job shipping pg_dump to Cloudflare R2. Redis caches, NATS with JetStream is the job queue, and an OpenTelemetry collector runs in agent mode.",
+      "index": 3,
+      "metadata": "The API Server and Everything It Leans On"
+    },
+    {
+      "content": "When a user submits code, the API publishes a message to NATS and returns. The worker on a separate server picks up the message and runs the code in a throwaway container sandbox with no network access. This is a queue with competing consumers, so scaling out means adding more workers or worker servers. The sandbox is isolated by Docker, network namespaces, cgroups, and seccomp.",
+      "index": 4,
+      "metadata": "The Worker and the Sandbox"
+    },
+    {
+      "content": "Auth is Clerk and payments are Paddle; both are bought because building them is not the core business. Everything else is self-hosted to control cost and latency. The platform server runs Grafana, Loki, Tempo, Prometheus, and Dokploy's deployment dashboard, all reachable only over the VPN.",
+      "index": 5,
+      "metadata": "What I Buy vs Self-Host"
+    }
+  ]
+}

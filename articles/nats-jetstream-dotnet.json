@@ -1,0 +1,42 @@
+{
+  "name": "Getting Started With NATS JetStream in .NET",
+  "source": "Milan Jovanović",
+  "url": "https://milanjovanovic.tech/blog/getting-started-with-nats-jetstream-in-dotnet",
+  "chunks": [
+    {
+      "content": "NATS is a messaging system that runs as a single Go binary, and JetStream is the persistence layer that turns a subject into a durable queue with at-least-once delivery. In .NET you add the NATS.Net client, publish from an endpoint, and consume in a BackgroundService. The handler has to be idempotent, because a crash before the ack causes a redelivery.",
+      "index": 0,
+      "metadata": "introduction"
+    },
+    {
+      "content": "Core NATS is fire-and-forget pub/sub: if no subscriber is listening, the message is gone. JetStream persists messages published to a subject into a file-backed stream, so a consumer can read them later even after a restart. That persistence turns a subject into a durable queue.",
+      "index": 1,
+      "metadata": "Core NATS vs JetStream"
+    },
+    {
+      "content": "NATS is tiny (about 18 MB), fast (millions of messages per second in core, hundreds of thousands with JetStream), cheap to run (tens of MB of RAM), and flexible per stream. Each stream sets its own storage and retention, so one server can host a cache and a strict work queue side by side.",
+      "index": 2,
+      "metadata": "Why It's Worth a Look"
+    },
+    {
+      "content": "Run the server with JetStream enabled using -js and -sd for persistence. Add NATS.Net and NATS.Extensions.Microsoft.DependencyInjection. Register AddNatsClient with the URL and add a singleton for the JetStream context created from INatsConnection.CreateJetStreamContext.",
+      "index": 3,
+      "metadata": "Set It Up"
+    },
+    {
+      "content": "Publish a job from a minimal API endpoint using INatsJSContext.PublishAsync. The message is a typed record serialized to JSON. Call EnsureSuccess on the PubAckResponse to verify the stream stored the message. The endpoint returns 202 Accepted.",
+      "index": 4,
+      "metadata": "Publish a Job"
+    },
+    {
+      "content": "Consume jobs in a BackgroundService. On startup create the stream with StreamConfig and CreateOrUpdateConsumerAsync for a durable pull consumer. Call ConsumeAsync in a loop, process the job, then ack. Storage can be File or Memory. Retention can be Limits (replayable log), Workqueue (drops on ack, FIFO), or Interest. For a job queue use Workqueue on File.",
+      "index": 5,
+      "metadata": "Process Jobs in a Worker"
+    },
+    {
+      "content": "Acknowledge the message after the side effect, never before. JetStream gives at-least-once delivery, so a crash before ack causes redelivery. A job can run more than once, so handlers must be idempotent. Track handled messages and skip duplicates in the same transaction as the side effect.",
+      "index": 6,
+      "metadata": "Acknowledge After the Side Effect"
+    }
+  ]
+}

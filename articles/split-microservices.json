@@ -1,0 +1,42 @@
+{
+  "name": "Should You Split That Into Microservices? Ask These 5 Questions First",
+  "source": "Milan Jovanović",
+  "url": "https://milanjovanovic.tech/blog/should-you-split-that-into-microservices-ask-these-5-questions-first",
+  "chunks": [
+    {
+      "content": "Split into microservices only when you can point at concrete drivers: measurably different scaling needs, teams blocking each other in one release process, a data boundary you can draw cleanly, or a real need for independent failure or release. You also have to afford the platform tax. With two or three yes answers, build a modular monolith instead.",
+      "index": 0,
+      "metadata": "introduction"
+    },
+    {
+      "content": "Question 1: Do parts of the system have genuinely different scaling needs? Look for 100x traffic differences, GPU needs, or memory spikes that force you to size the whole deployment for a peak. Most .NET monoliths scale out behind a load balancer; if three instances handle everything, you don't have a scaling problem worth a service boundary.",
+      "index": 1,
+      "metadata": "Different Scaling Needs"
+    },
+    {
+      "content": "Question 2: Are teams actually blocking each other? Microservices are an organizational tool. The strongest signal is multiple teams in one codebase with release trains, freezes, or merge queues delaying hotfixes. If you're a team of six, one team doesn't step on itself enough to justify a distributed system.",
+      "index": 2,
+      "metadata": "Teams Blocking Each Other"
+    },
+    {
+      "content": "Question 3: Can you draw the data boundary? Each service must own its data outright. If two candidate services constantly need each other's data to answer basic queries, they're one service cut in half. A boundary that looks clean on an org chart can be entangled at the data level, and adding a network makes every join an API call.",
+      "index": 3,
+      "metadata": "Data Boundary"
+    },
+    {
+      "content": "Question 4: Does anything require independent failure or release? Examples are payment flows that must stay up when reporting is down, compliance boundaries like PCI or HIPAA where you want a small audited surface, or integrations that ship weekly while the core ships quarterly. A general wish for isolation is not enough.",
+      "index": 4,
+      "metadata": "Independent Failure or Release"
+    },
+    {
+      "content": "Question 5: Can you afford the platform tax? Before the first microservice delivers value you need a container platform, CI/CD per service, centralized logging, distributed tracing, a message broker, and reliability patterns like outbox, idempotent consumers, and retries with backoff. Below roughly two full teams the organizational argument for microservices is zero.",
+      "index": 5,
+      "metadata": "Platform Tax"
+    },
+    {
+      "content": "Scoring: Four or five yes answers means split, starting with one service. Two or three means use a modular monolith, which gives boundaries and team ownership without the platform tax. Zero or one means keep the monolith and invest in making it excellent.",
+      "index": 6,
+      "metadata": "Scoring It"
+    }
+  ]
+}

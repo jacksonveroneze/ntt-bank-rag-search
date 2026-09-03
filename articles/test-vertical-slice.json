@@ -1,0 +1,32 @@
+{
+  "name": "How to Test Vertical Slice Architecture",
+  "source": "Milan Jovanović",
+  "url": "https://milanjovanovic.tech/blog/how-to-test-vertical-slice-architecture",
+  "chunks": [
+    {
+      "content": "Test a slice through its public entrance: a real HTTP request in, and assertions on the response plus the rows it wrote. WebApplicationFactory hosts the app in-memory while Testcontainers gives you a real Postgres in Docker, both started once per test class. Anything you own, including the database, stays real in the test.",
+      "index": 0,
+      "metadata": "introduction"
+    },
+    {
+      "content": "A vertical slice has a natural contract: a request goes in at the top and an observable outcome comes out (a response, database rows, maybe a message on a bus). Test exactly that contract with one focused set of tests per slice. Do not test with a mocked DbContext or a mocked handler; test the whole slice through its public entrance. This catches broken SQL, broken mapping, broken validation, and broken routing in one go.",
+      "index": 1,
+      "metadata": "The Slice Is the Unit"
+    },
+    {
+      "content": "Two pieces make slice tests fast: WebApplicationFactory hosts the app in-memory, and Testcontainers provides real infrastructure in Docker. A shared fixture boots both once per test class. Wire a real database connection string from the Postgres container, and only fake what you don't own like payment gateways or email providers.",
+      "index": 2,
+      "metadata": "The Setup That Makes It Practical"
+    },
+    {
+      "content": "A slice test reads like a description of the feature. Send an HTTP request, assert the response status, and then read the database through a fresh scope to verify what actually persisted. Filter by the identifier you sent instead of grabbing the one row, and reset tables between tests when counting rows or checking ordering. xUnit runs tests in a class sequentially, so a reset helper at the start of each test gives a clean slate.",
+      "index": 3,
+      "metadata": "Slice Test Examples"
+    },
+    {
+      "content": "Summary: in vertical slice architecture the slice is the unit. Test it through its public entrance with a real database and in-memory host. Do not test layers in isolation. Filter assertions by IDs and reset shared state between tests. This makes refactoring inside the slice safe because tests are coupled to behavior, not structure.",
+      "index": 4,
+      "metadata": "Summary"
+    }
+  ]
+}
