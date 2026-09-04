@@ -5,19 +5,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentValidation"/>
+    <PackageReference Include="CorrelationId"/>
+    <PackageReference Include="OllamaSharp"/>
+    <PackageReference Include="Mapster.DependencyInjection"/>
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions"/>
+
+    <PackageReference Include="EFCore.NamingConventions"/>
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL"/>
     <PackageReference Include="Pgvector.EntityFrameworkCore"/>
-    <PackageReference Include="EFCore.NamingConventions"/>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design"/>
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json"/>
-    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables"/>
-    <PackageReference Include="Microsoft.Extensions.AI"/>
-    <PackageReference Include="OllamaSharp"/>
-    <PackageReference Include="Microsoft.Extensions.Http"/>
-    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions"/>
-    <PackageReference Include="Microsoft.Extensions.Http.Resilience"/>
+
     <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore"/>
-    <PackageReference Include="CorrelationId"/>
+
     <PackageReference Include="OpenTelemetry.Exporter.Prometheus.AspNetCore"/>
     <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol"/>
     <PackageReference Include="OpenTelemetry.Extensions.Hosting"/>
@@ -25,12 +24,14 @@
     <PackageReference Include="OpenTelemetry.Instrumentation.Http"/>
     <PackageReference Include="OpenTelemetry.Instrumentation.Runtime"/>
     <PackageReference Include="OpenTelemetry.Instrumentation.Process"/>
+    <PackageReference Include="OpenTelemetry.Instrumentation.EntityFrameworkCore"/>
+    <PackageReference Include="Npgsql.OpenTelemetry"/>
+
     <PackageReference Include="Serilog.AspNetCore"/>
     <PackageReference Include="Serilog.Settings.Configuration"/>
     <PackageReference Include="Serilog.Sinks.Async"/>
     <PackageReference Include="Serilog.Expressions"/>
     <PackageReference Include="Serilog.Sinks.Seq"/>
-    <PackageReference Include="Mapster.DependencyInjection"/>
   </ItemGroup>
 
 </Project>

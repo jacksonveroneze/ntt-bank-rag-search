@@ -3,16 +3,20 @@ using NttBank.RagSearch.Api.Contracts;
 
 namespace NttBank.RagSearch.Api.Validators;
 
-public sealed class SearchRequestValidator 
+public sealed class SearchRequestValidator
     : AbstractValidator<SearchRequest>
 {
+    private const int QueryMaxLength = 4000;
+    private const int TopKMinValue = 1;
+    private const int TopKMaxValue = 100;
+
     public SearchRequestValidator()
     {
         RuleFor(r => r.Query)
             .NotEmpty()
-            .MaximumLength(4000);
+            .MaximumLength(QueryMaxLength);
 
         RuleFor(r => r.TopK)
-            .InclusiveBetween(1, 100);
+            .InclusiveBetween(TopKMinValue, TopKMaxValue);
     }
 }

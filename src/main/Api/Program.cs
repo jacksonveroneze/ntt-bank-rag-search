@@ -1,5 +1,6 @@
 using CorrelationId;
 using FluentValidation;
+using NttBank.RagSearch.Api;
 using NttBank.RagSearch.Api.Endpoints.Rag;
 using NttBank.RagSearch.Api.Middlewares;
 using NttBank.RagSearch.Infrastructure.Configurations;
@@ -18,7 +19,7 @@ builder.Services
     .AddDatabase(appConfiguration, builder.Environment)
     .AddEmbeddingGenerator(appConfiguration)
     .AddApplicationServices()
-    .AddMapper()
+    .AddMapper(AssemblyReference.Assembly)
     .AddOpenTelemetry(appConfiguration)
     .AddProblemDetails()
     .AddExceptionHandler<CustomExceptionHandler>()

@@ -4,27 +4,32 @@ using NttBank.RagSearch.Infrastructure.Entities;
 
 namespace NttBank.RagSearch.Infrastructure.Mappings;
 
-internal sealed class DocumentMapping 
+internal sealed class DocumentMapping
     : IEntityTypeConfiguration<Document>
 {
+    private const string TableName = "document";
+    private const int NameMaxLength = 500;
+    private const int SourceMaxLength = 500;
+    private const int UrlMaxLength = 2048;
+
     public void Configure(EntityTypeBuilder<Document> builder)
     {
         ArgumentNullException.ThrowIfNull(builder);
 
-        builder.ToTable("document");
+        builder.ToTable(TableName);
 
         builder.HasKey(conf => conf.Id);
 
         builder.Property(conf => conf.Name)
-            .HasMaxLength(500)
+            .HasMaxLength(NameMaxLength)
             .IsRequired();
 
         builder.Property(conf => conf.Source)
-            .HasMaxLength(500)
+            .HasMaxLength(SourceMaxLength)
             .IsRequired();
 
         builder.Property(conf => conf.Url)
-            .HasMaxLength(2048)
+            .HasMaxLength(UrlMaxLength)
             .IsRequired();
 
         builder.Property(conf => conf.CreatedAt)

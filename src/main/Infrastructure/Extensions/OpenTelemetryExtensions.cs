@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using Npgsql;
 using NttBank.RagSearch.Infrastructure.Configurations;
 using OpenTelemetry;
 using OpenTelemetry.Instrumentation.AspNetCore;
@@ -44,20 +45,19 @@ public static class OpenTelemetryExtensions
         }
     }
 
-    public static IOpenTelemetryBuilder AddMetrics(this IOpenTelemetryBuilder builder)
+    private static IOpenTelemetryBuilder AddMetrics(this IOpenTelemetryBuilder builder)
     {
         builder.WithMetrics(options => options
             .AddProcessInstrumentation()
             .AddAspNetCoreInstrumentation()
-            .AddHttpClientInstrumentation()
             .AddRuntimeInstrumentation()
-            .AddMeter("Microsoft.Extensions.AI")
+            .AddNpgsqlInstrumentation()
             .AddPrometheusExporter());
 
         return builder;
     }
 
-    public static IOpenTelemetryBuilder AddTracing(
+    private static IOpenTelemetryBuilder AddTracing(
         this IOpenTelemetryBuilder builder,
         AppConfiguration appConfiguration)
     {
@@ -71,7 +71,8 @@ public static class OpenTelemetryExtensions
             options
                 .AddAspNetCoreInstrumentation()
                 .AddHttpClientInstrumentation()
-                .AddSource("Microsoft.Extensions.AI")
+                .AddEntityFrameworkCoreInstrumentation()
+                .AddNpgsql()
                 .AddOtlpExporter(config =>
                     config.Endpoint = appConfiguration.OpenTelemetry.EndpointTracing);
         });

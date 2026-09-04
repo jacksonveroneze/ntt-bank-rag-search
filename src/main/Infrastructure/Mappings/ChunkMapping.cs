@@ -4,14 +4,23 @@ using NttBank.RagSearch.Infrastructure.Entities;
 
 namespace NttBank.RagSearch.Infrastructure.Mappings;
 
-internal sealed class ChunkMapping 
+internal sealed class ChunkMapping
     : IEntityTypeConfiguration<Chunk>
 {
+    private const string TableName = "chunk";
+    private const string EmbeddingColumnType = "vector(384)";
+    private const string HnswIndexMethod = "hnsw";
+    private const string VectorCosineOps = "vector_cosine_ops";
+    private const string MStorageParameter = "m";
+    private const int MStorageValue = 16;
+    private const string EfConstructionStorageParameter = "ef_construction";
+    private const int EfConstructionValue = 64;
+
     public void Configure(EntityTypeBuilder<Chunk> builder)
     {
         ArgumentNullException.ThrowIfNull(builder);
 
-        builder.ToTable("chunk");
+        builder.ToTable(TableName);
 
         builder.HasKey(conf => conf.Id);
 
@@ -22,7 +31,7 @@ internal sealed class ChunkMapping
             .IsRequired();
 
         builder.Property(conf => conf.Embedding)
-            .HasColumnType("vector(384)")
+            .HasColumnType(EmbeddingColumnType)
             .IsRequired();
 
         builder.Property(conf => conf.Metadata)
@@ -35,9 +44,9 @@ internal sealed class ChunkMapping
             .IsRequired();
 
         builder.HasIndex(e => e.Embedding)
-            .HasMethod("hnsw")
-            .HasOperators("vector_cosine_ops")
-            .HasStorageParameter("m", 16)
-            .HasStorageParameter("ef_construction", 64);
+            .HasMethod(HnswIndexMethod)
+            .HasOperators(VectorCosineOps)
+            .HasStorageParameter(MStorageParameter, MStorageValue)
+            .HasStorageParameter(EfConstructionStorageParameter, EfConstructionValue);
     }
 }

@@ -1,3 +1,4 @@
+using System.Reflection;
 using Mapster;
 using MapsterMapper;
 using Microsoft.Extensions.DependencyInjection;
@@ -7,12 +8,15 @@ namespace NttBank.RagSearch.Infrastructure.Extensions;
 public static class MapperExtensions
 {
     public static IServiceCollection AddMapper(
-        this IServiceCollection services)
+        this IServiceCollection services,
+        Assembly assembly)
     {
         services.AddSingleton<TypeAdapterConfig>(_ =>
         {
             var config = new TypeAdapterConfig();
-            //new RagMappingConfig().Register(config);
+   
+            config.Scan(assembly);
+            
             return config;
         });
 
