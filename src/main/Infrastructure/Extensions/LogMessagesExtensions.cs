@@ -13,10 +13,11 @@ internal static partial class LogMessagesExtensions
         int resultCount);
 
     [LoggerMessage(
-        EventId = 1101,
-        Level = LogLevel.Error,
-        Message = "RAG search failed")]
-    public static partial void RagSearchFailed(
+        EventId = 1102,
+        Level = LogLevel.Information,
+        Message = "Document {DocumentId} indexed with {ChunkCount} chunks")]
+    public static partial void DocumentIndexed(
         this ILogger logger,
-        Exception exception);
+        Guid documentId,
+        int chunkCount);
 }

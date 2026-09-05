@@ -8,7 +8,8 @@ public sealed class SearchRequestValidator
 {
     private const int QueryMaxLength = 4000;
     private const int TopKMinValue = 1;
-    private const int TopKMaxValue = 100;
+
+    private const int TopKMaxValue = 40;
 
     public SearchRequestValidator()
     {

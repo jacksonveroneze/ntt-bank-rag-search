@@ -76,8 +76,6 @@ public static class RagEndpoints
         var documentId = await service
             .IndexAsync(input, cancellationToken);
 
-        return Results.Created(
-            $"api/v1/rag/documents/{documentId}", 
-            documentId);
+        return Results.Created((string?)null, documentId);
     }
 }

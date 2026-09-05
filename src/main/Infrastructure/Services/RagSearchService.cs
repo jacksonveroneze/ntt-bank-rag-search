@@ -35,10 +35,6 @@ public sealed class RagSearchService(
         var chunks = await context.Chunks
             .AsNoTracking()
             .Include(c => c.Document)
-            .Where(c => c.Embedding.CosineDistance(queryVector) 
-                        <= embeddingConfiguration.MaxDistance)
-            .OrderBy(c => c.Embedding.CosineDistance(queryVector))
-            .Take(topK)
             .Select(selector => new
             {
                 selector.Content,
@@ -46,6 +42,9 @@ public sealed class RagSearchService(
                 selector.Document.Url,
                 Distance = selector.Embedding.CosineDistance(queryVector),
             })
+            .Where(selector => selector.Distance <= embeddingConfiguration.MaxDistance)
+            .OrderBy(selector => selector.Distance)
+            .Take(topK)
             .ToListAsync(cancellationToken);
 
         var results = chunks
